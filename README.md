@@ -13,7 +13,7 @@
     background: #fff`  
 3.图标区域  
   实现效果：在图标区显示8个导引小图标，超过8个时增加第二页可以进行分页轮播查看。  
-  逻辑实现：*借助swiper来完成轮播动画，不过要通过computed计算属性来完成分页的计算，运用了一维数组转化为二维数组的方法，pages[0]中最多是8个图标，多余的放到pages[1]中，在swiper-slide中就是展示的下一页内容。*
+  逻辑实现：*借助swiper来完成轮播动画，不过要通过computed计算属性来完成分页的计算，运用了一维数组转化为二维数组的方法，pages[0]中最多是8个图标，多余的放到pages[1]中，在swiper-slide中就是展示的下一页内容。*  
   主要代码段：   
   template部分：
 ````
@@ -47,22 +47,24 @@ pages () {
 }
 ````
 问题1：图标区域仅仅只有上面的一行支持图标拖动，下面一行不支持  
-问题分析：因为`swiper-container`的高度只有图标的高度，不是整个图标区的高度
+问题分析：因为`swiper-container`的高度只有图标的高度，不是整个图标区的高度  
 问题解决：  
 ````
   .icons >>> .swiper-container  //样式穿透，让swiper-container包含整个图标区域的高度
     height: 0
     padding-bottom: 50%  //宽高比
 ````  
-问题2：每个小图标下面的介绍文字过长时，要求用省略号...表示
-问题分析：由于每页都有8个小图标，所以可以使用stylus样式预处理机制，在mixins.styl文件中封装一个ellipsis（）方法，应用在文字表述的类里面
+问题2：每个小图标下面的介绍文字过长时，要求用省略号...表示  
+问题分析：由于每页都有8个小图标，所以可以使用stylus样式预处理机制，在mixins.styl文件中封装一个ellipsis（）方法，应用在文字表述的类里面  
 问题解决：  
+mixins.styl文件
  ````
  ellipsis()
   overflow: hidden  //超过规定区域隐藏元素
   white-space: nowrap  //超过的空白区不换行
   text-overflow: ellipsis  //文本超过后用省略号表示
 ````
+style样式部分
 ````
     .icon-desc
       position: absolute
@@ -74,13 +76,6 @@ pages () {
       text-align: center
       color: $darkTextColor
       ellipsis()   //引用位置
-````
-````
-  .icons >>> .swiper-container  //样式穿透，让swiper-container包含整个图标区域的高度
-    height: 0
-    padding-bottom: 50%  //宽高比
-````
- ````
 ````
 4.热销推荐组件开发  
 5.周末游组件开发  
