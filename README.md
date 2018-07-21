@@ -12,6 +12,27 @@
 `  .wrapper >>> .swiper-pagination-bullet-active
     background: #fff`  
 3.图标区域  
+  实现效果：在图标区显示8个导引小图标，超过8个时增加第二页可以进行分页轮播查看。  
+  逻辑实现：借助swiper来完成轮播动画，不过要通过computed计算属性来完成分页的计算，运用了一维数组转化为二维数组的方法，pages[0]中最多是8个图标，多余的放到pages[1]中，在swiper-slide中就是展示的下一页内容。  
+  主要代码段：  
+    <div class="icons">
+    <swiper>
+      <swiper-slide v-for="(page, index) of pages" :key="index">
+        <div
+          class="icon"
+          v-for="item of page"
+          :key="item.id"
+        >
+          <div class='icon-img'>
+            <img class='icon-img-content' :src='item.imgUrl' />
+          </div>
+          <p class="icon-desc">{{item.desc}}</p>
+        </div>
+      </swiper-slide>
+    </swiper>
+  </div>
+  
+ 
 4.热销推荐组件开发  
 5.周末游组件开发  
 6.使用axios发送ajax请求  
