@@ -2,6 +2,15 @@
 ## 旅游网站首页开发
 1.header区域  
 2.首页轮播图  
+（1）图片的宽高为640px,200px,宽高比例是31.25%
+  是为了进行宽高比例自适应
+    `width: 100%
+    padding-bottom: 31.25%`
+（2）scoped：表示当前的样式仅仅对HomeSwiper这个单页组件有效，而轮播图里面的分页，
+  确实在swipe这样的一个子组件中，即便在style中设置了样式也不奏效，只有进行样式的穿透。
+  样式穿透：
+`  .wrapper >>> .swiper-pagination-bullet-active
+    background: #fff`
 3.图标区域  
 4.热销推荐组件开发  
 5.周末游组件开发  
