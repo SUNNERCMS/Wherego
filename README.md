@@ -78,7 +78,10 @@ style样式部分
       color: $darkTextColor
       ellipsis()   //引用位置
 ````
-4.热销推荐组件开发  
+### 4.热销推荐组件开发  
+实现效果：分栏展示，每栏左侧是介绍图片，右侧是介绍信息以及查看详情的点击按钮。
+|![](http://orhm8wuhd.bkt.clouddn.com/quanzhanbuluo.png)|
+
 5.周末游组件开发  
 6.使用axios发送ajax请求  
 7.首页父子组件的传值
