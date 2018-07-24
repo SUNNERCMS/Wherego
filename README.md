@@ -79,8 +79,27 @@ style样式部分
       ellipsis()   //引用位置
 ````
 ### 4.热销推荐组件开发  
-实现效果：分栏展示，每栏左侧是介绍图片，右侧是介绍信息以及查看详情的点击按钮。
-|![](http://orhm8wuhd.bkt.clouddn.com/quanzhanbuluo.png)|
+实现效果：分栏展示，每栏左侧是介绍图片，右侧是介绍信息以及查看详情的点击按钮。  
+知识点：  
+（1）text-indent 属性规定文本块中首行文本的缩进。注释：允许使用负值。如果使用负值，那么首行会被缩进到左边。  
+### 遇到的问题及解决办法
+- 问题1：给右侧的标题和其下面的详细介绍信息加上ellipsis（）方法后，并没有出现页面的效果，文字会显示到区域的最右边。  
+问题分析：其自身或者其父元素没有设置最小宽度，或者没有设置超过区域的文本的显示方式。  
+问题解决： 
+````
+    .item-info
+      flex: 1
+      padding: .1rem
+      min-width: 0  //解决没有显示省略号的问题或者使用 overflow: hidden
+      .item-title   
+        line-height: .54rem
+        font-size: .32rem
+        ellipsis()    //右侧中介绍信息的标题，若标题过长则显示省略号
+      .item-desc
+        line-height: .4rem
+        color: #ccc
+        ellipsis()   //右侧中下面的详细描述信息，若过长则显示省略号
+````
 
 5.周末游组件开发  
 6.使用axios发送ajax请求  
