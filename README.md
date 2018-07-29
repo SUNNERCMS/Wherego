@@ -100,11 +100,11 @@ style样式部分
         color: #ccc
         ellipsis()   //右侧中下面的详细描述信息，若过长则显示省略号
 ````
-### 周末游组件开发  
+### 5.周末游组件开发  
 实现效果：纵向分栏展示，分为两部分，上面是图片，下面是信息。  
 实现逻辑：与热销推荐组件开发类似，将样式稍作改变即可。
 
-6.使用axios发送ajax请求  
+### 6.使用axios发送ajax请求  
 知识点1：项目列表中的static文件夹中的内容可以由外部地址访问到。  
 由于是用来放本地的模拟数据，所以不需要打包上传，可以在gitignore文件中进行配置,配置后不会被提交到线上的git仓库中，也不会被提交到本地仓库中。
 ````
@@ -145,8 +145,58 @@ static/mock
         }
     },
 ````
+### 7.首页父子组件的传值
 
-7.首页父子组件的传值
+### 遇到的问题及解决办法  
+- 问题1：通过ajax获取到的返回的数据，从中取得首页焦点轮播图的数据，图片显示正常，不过图片不是从第一张开始轮播的，而是从最后一张。  
+问题解决：这个问题正是由于在没有真正返回数据时，list由父组件传过来的空数组进行了数据渲染，在`<swiper>`标签中加入条件判断，判断依据就是轮播数据是不是为空。让其用真正返回的数据进行加载，而不是空数组，可以解决这个问题。
+````
+//首页home.vue代码
+<home-swiper :list="swiperList"></home-swiper>        //2、通过属性传值，这里将获取的轮播数据赋值给list属性
+
+  data () {
+    return {
+      city: '',
+      swiperList: []
+    }
+  },
+  
+  getHomeInfoSucc (res) {
+    res = res.data
+    if (res.ret && res.data) {
+      const data = res.data
+      this.city = data.city
+      this.swiperList = data.swiperList       //1、从响应中获取轮播数据赋值给data （）中的swiperList
+    }
+}
+  //swiper.vue中代码
+  <swiper :options="swiperOption" v-if="showSwiper"> //二、若list为空，说明没有从父组件获得数据，此时为false不进行节点渲染，不展示轮播
+    <swiper-slide v-for="item of list" :key="item.id">  //4、用得到的list数据进行遍历
+    props: {       
+      list: Array    //3、子组件通过list用来接收轮播数据
+    },
+  
+    computed: { 
+      showSwiper () {   //一、计算属性，定义了一个showSwiper函数，用来计算list数据是不是为空
+        return this.list.length
+      }
+  }
+  
+````
+- 问题2：图标区域的最终效果应该是，超过8个图标时，可以手动滑到下一页，结果这里自动轮播了，效果和轮播区域一样了。
+问题解决：给 `<swiper>` 中增加一个停止轮播的属性
+````
+<swiper :options="swiperOption">  //将返回的swiperOption赋值给option属性进行轮播停止
+    
+  data () {
+    return {
+      swiperOption: {
+        autoplay: false   //通过将autoplay设置为false，可以停止轮播
+      }
+    }
+  },
+````
+
 ## 旅游网站城市列表页开发  
 ## 旅游网站详情介绍页开发  
 ## 项目联调测试与发布上线
