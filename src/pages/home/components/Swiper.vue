@@ -1,8 +1,8 @@
 <template>
   <!-- 这个DIV标签是为了给图片一个区域，避免页面抖动 -->
   <div class="wrapper">
-    <swiper :options="swiperOption">
-      <swiper-slide v-for="item of swiperList" :key="item.id">
+    <swiper :options="swiperOption" v-if="showSwiper">
+      <swiper-slide v-for="item of list" :key="item.id">
         <img class="swiper-img" :src="item.imgUrl" />
       </swiper-slide>
       <div class="swiper-pagination"  slot="pagination"></div>
@@ -13,29 +13,22 @@
 <script>
 export default {
   name: 'HomeSwiper', // 单页面组件名字
-  // props: {
-  //   list: Array
-  // },
+  props: {
+    list: Array
+  },
   data () {
     return {
       swiperOption: {
         pagination: '.swiper-pagination',
         loop: true
-      },
-      swiperList: [{
-        id: '0001',
-        imgUrl: 'http://img1.qunarzz.com/piao/fusion/1802/e3/62ce7362ca051d02.jpg_640x200_6db551b7.jpg'
-      }, {
-        id: '0002',
-        imgUrl: 'http://img1.qunarzz.com/piao/fusion/1801/93/ce59d182aca07102.jpg_640x200_ba03d44c.jpg'
-      }]
+      }
+    }
+  },
+  computed: {
+    showSwiper () {
+      return this.list.length
     }
   }
-  // computed: {
-  //   showSwiper () {
-  //     return this.list.length
-  //   }
-  // }
 }
 </script>
 

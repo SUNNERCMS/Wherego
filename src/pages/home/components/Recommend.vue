@@ -2,7 +2,7 @@
   <div>
     <div class="title">热销推荐</div>
     <ul>
-      <li class="item border-bottom" v-for="item of recommendList" :key="item.id">
+      <li class="item border-bottom" v-for="item of list" :key="item.id">
         <img class="item-img" :src="item.imgUrl" />
         <div class="item-info">
           <p class="item-title">{{item.title}}</p>
@@ -17,25 +17,8 @@
 <script>
 export default {
   name: 'HomeRecommend',
-  data () {
-    return {
-      recommendList: [{
-        id: '0001',
-        imgUrl: 'http://img1.qunarzz.com/sight/p0/201404/23/04b92c99462687fa1ba45c1b5ba4ad77.jpg_140x140_73fda71d.jpg',
-        title: '大连圣亚海洋世界',
-        desc: '浪漫大连首站，浪漫的海洋主题乐园'
-      }, {
-        id: '0002',
-        imgUrl: 'https://imgs.qunarzz.com/p/tts8/1706/7c/026782d9dc37be02.jpg_r_390x260x90_debc208c.jpg',
-        title: '独特的新马异域风情',
-        desc: '双国新马6/5天之旅：武汉直飞，升级一晚国际五星，2人同行送保险'
-      }, {
-        id: '0003',
-        imgUrl: 'https://imgs.qunarzz.com/p/tts4/1804/fa/895d6b82a9a2ae02.jpg_262x238_6f1b2c9f.jpg',
-        title: '武汉宜昌-三峡人家',
-        desc: '小船悠悠，湖面粼粼，享受大自然的馈赠'
-      }]
-    }
+  props: {
+    list: Array
   }
 }
 </script>
