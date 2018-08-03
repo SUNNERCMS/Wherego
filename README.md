@@ -16,7 +16,7 @@
   逻辑实现：*借助swiper来完成轮播动画，不过要通过computed计算属性来完成分页的计算，运用了一维数组转化为二维数组的方法，pages[0]中最多是8个图标，            多余的放到pages[1]中，在swiper-slide中就是展示的下一页内容。*  
   主要代码段：   
   template部分：
-````
+````js
 <div class="icons"> //整个图标区域的容器
   <swiper>   //轮播容器
     <swiper-slide v-for="(page, index) of pages" :key="index">  //轮播滚动项容器， 遍历index页并将每一页的全部图标在下面进行遍历显示
@@ -31,7 +31,7 @@
 </div>
 ```` 
   计算属性部分：
-````
+````js
 computed: {
 pages () {
   const pages = []
@@ -50,7 +50,7 @@ pages () {
 - 问题1：图标区域仅仅只有上面的一行支持图标拖动，下面一行不支持  
 问题分析：因为`swiper-container`的高度只有图标的高度，不是整个图标区的高度  
 问题解决：  
-````
+````css
   .icons >>> .swiper-container  //样式穿透，让swiper-container包含整个图标区域的高度
     height: 0
     padding-bottom: 50%  //宽高比
@@ -66,7 +66,7 @@ mixins.styl文件
   text-overflow: ellipsis  //文本超过后用省略号表示
 ````
 style样式部分
-````
+````css
     .icon-desc
       position: absolute
       left: 0
