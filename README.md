@@ -202,7 +202,7 @@ static/mock
 实现效果：点击首页头部的城市选项，进入到城市列表页，点击城市列表页左侧的返回箭头，跳转到首页。  
 实现逻辑：路由配置。  
 [参考文档](https://www.cnblogs.com/SamWeb/p/6610733.html)
-> <router-link> 就是定义页面中点击的部分,<router-link> 还有一个非常重要的属性 to，定义点击之后，要到哪里去， 如：
+> `<router-link> `就是定义页面中点击的部分,<router-link> 还有一个非常重要的属性 to，定义点击之后，要到哪里去， 如：
 ```js
     <router-link to='/city'>      //点击后跳转的地方，会和routers的路由进行匹配，进行相关组件的跳转。
       <div class="header-right">    //这里的div标签是点击对象，是一个区域。
@@ -223,8 +223,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: Home
+      name: 'Home',    
+      component: Home  //要使用这个组件，那么就需要先把它通过inport引入进来。
     },
     {
       path: '/city',
