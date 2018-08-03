@@ -13,7 +13,7 @@
     background: #fff`  
 ### 3.图标区域  
   实现效果：在图标区显示8个导引小图标，超过8个时增加第二页可以进行分页轮播查看。  
-  逻辑实现：*借助swiper来完成轮播动画，不过要通过computed计算属性来完成分页的计算，运用了一维数组转化为二维数组的方法，pages[0]中最多是8个图标，            多余的放到pages[1]中，在swiper-slide中就是展示的下一页内容。*  
+  逻辑实现：*借助`swiper`来完成轮播动画，不过要通过`computed`计算属性来完成分页的计算，运用了一维数组转化为二维数组的方法，`pages[0]`中最多是8个图标,多余的放到`pages[1]`中，在`swiper-slide`中就是展示的下一页内容。*  
   主要代码段：   
   template部分：
 ````js
@@ -202,8 +202,41 @@ static/mock
 实现效果：点击首页头部的城市选项，进入到城市列表页，点击城市列表页左侧的返回箭头，跳转到首页。  
 实现逻辑：路由配置。  
 [参考文档](https://www.cnblogs.com/SamWeb/p/6610733.html)
+> <router-link> 就是定义页面中点击的部分,<router-link> 还有一个非常重要的属性 to，定义点击之后，要到哪里去， 如：
+```js
+    <router-link to='/city'>      //点击后跳转的地方，会和routers的路由进行匹配，进行相关组件的跳转。
+      <div class="header-right">    //这里的div标签是点击对象，是一个区域。
+        {{this.city}}
+        <span class="iconfont arrow-icon">&#xe64a;</span>
+      </div>
+    </router-link>
+```
+> router 是一个机制，相当于一个管理者，它来管理路由。因为routes 只是定义了一组路由，它放在哪里是静止的，当真正来了请求，怎么办？ 就是当用户点击 <router-link>的时候，怎么办？这时router这个管理员就起作用了，它到routes 中去查找，去找到对应的内容，并进行显示，也就是说从route-link跳转到相关组件，是有router这个管理员完成的。  
+注意：*to的属性值也就是跳转路径，必须和routes中的path值一样，因为只有这样才能保证匹配成功，完成跳转*
+```js
+import Vue from 'vue'
+import Router from 'vue-router'
+import Home from '@/pages/home/Home'
+import City from '@/pages/city/City'
+Vue.use(Router)
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'Home',
+      component: Home
+    },
+    {
+      path: '/city',
+      name: 'City',
+      component: City
+    }
+  ]
+})
+```
+
 ### 2、搜索框布局  
-### 3、列表布局  
+### 3、列表布局
 ### 4、BetterScroll的使用和字母表布局
 
 ## 旅游网站详情介绍页开发  
