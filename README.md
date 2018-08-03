@@ -16,7 +16,7 @@
   逻辑实现：*借助swiper来完成轮播动画，不过要通过computed计算属性来完成分页的计算，运用了一维数组转化为二维数组的方法，pages[0]中最多是8个图标，            多余的放到pages[1]中，在swiper-slide中就是展示的下一页内容。*  
   主要代码段：   
   template部分：
-````
+````js
 <div class="icons"> //整个图标区域的容器
   <swiper>   //轮播容器
     <swiper-slide v-for="(page, index) of pages" :key="index">  //轮播滚动项容器， 遍历index页并将每一页的全部图标在下面进行遍历显示
@@ -31,7 +31,7 @@
 </div>
 ```` 
   计算属性部分：
-````
+````js
 computed: {
 pages () {
   const pages = []
@@ -50,7 +50,7 @@ pages () {
 - 问题1：图标区域仅仅只有上面的一行支持图标拖动，下面一行不支持  
 问题分析：因为`swiper-container`的高度只有图标的高度，不是整个图标区的高度  
 问题解决：  
-````
+````css
   .icons >>> .swiper-container  //样式穿透，让swiper-container包含整个图标区域的高度
     height: 0
     padding-bottom: 50%  //宽高比
@@ -59,14 +59,14 @@ pages () {
 问题分析：由于每页都有8个小图标，所以可以使用stylus样式预处理机制，在mixins.styl文件中封装一个ellipsis（）方法，应用在文字表述的类里面  
 问题解决：  
 mixins.styl文件
- ````
+ ````css
  ellipsis()
   overflow: hidden  //超过规定区域隐藏元素
   white-space: nowrap  //超过的空白区不换行
   text-overflow: ellipsis  //文本超过后用省略号表示
 ````
 style样式部分
-````
+````css
     .icon-desc
       position: absolute
       left: 0
@@ -86,7 +86,7 @@ style样式部分
 - 问题1：给右侧的标题和其下面的详细介绍信息加上ellipsis（）方法后，并没有出现页面的效果，文字会显示到区域的最右边。  
 问题分析：其自身或者其父元素没有设置最小宽度，或者没有设置超过区域的文本的显示方式。  
 问题解决： 
-````
+````css
     .item-info
       flex: 1
       padding: .1rem
@@ -118,7 +118,7 @@ static/mock
 ````   
 知识点2：用axios进行ajax请求的过程。  
 主要代码片段：  
-````
+````js
   mounted () {          //mounted()钩子函数：在页面挂载结束后被触发，在这个时候把ajax返回的数据获取过来。
     this.getHomeInfo() //获取响应数据，然后应用到各个分页组件中。
   },
@@ -151,7 +151,7 @@ static/mock
 ### 遇到的问题及解决办法  
 - 问题1：通过ajax获取到的返回的数据，从中取得首页焦点轮播图的数据，图片显示正常，不过图片不是从第一张开始轮播的，而是从最后一张。  
 问题解决：这个问题正是由于在没有真正返回数据时，list由父组件传过来的空数组进行了数据渲染，在`<swiper>`标签中加入条件判断，判断依据就是轮播数据是不是为空。让其用真正返回的数据进行加载，而不是空数组，可以解决这个问题。
-````
+````js
 //首页home.vue代码
 <home-swiper :list="swiperList"></home-swiper>        //2、通过属性传值，这里将获取的轮播数据赋值给list属性
 
@@ -186,7 +186,7 @@ static/mock
 ````
 - 问题2：图标区域的最终效果应该是，超过8个图标时，可以手动滑到下一页，结果这里自动轮播了，效果和轮播区域一样了。
 问题解决：给 `<swiper>` 中增加一个停止轮播的属性
-````
+````js
 <swiper :options="swiperOption">  //将返回的swiperOption赋值给option属性进行轮播停止
     
   data () {
@@ -198,7 +198,8 @@ static/mock
   },
 ````
 
-## 旅游网站城市列表页开发  
+## 旅游网站城市列表页开发 
+### 1、路由配置
 ## 旅游网站详情介绍页开发  
 ## 项目联调测试与发布上线
 1.  
