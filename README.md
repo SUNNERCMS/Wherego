@@ -257,6 +257,25 @@ new Vue({
     }
 ```
 ### 2、搜索框布局  
+> 主要注意的布局细节点：  
+在输入框中输入文字时，当文字过长时，可能会紧贴输入框的左右边框，此时要使用padding留白，并且这个留白不能使现有的输入框长度边长，否则会撑破父容器。*也即是说：只能向里要空间，不能向外要空间，使用怪异盒模型。*
+- 主要代码段
+```CSS
+  .search
+    height: .72rem
+    padding: 0 .1rem
+    background: $bgColor
+    .search-input
+      box-sizing: border-box  //使用怪异盒模型。
+      width: 100%            //这里的宽度100% = 父元素的宽度-父元素设置的左右.1rem（5px）的padding
+      height: .62rem
+      padding: 0 .1rem     //文本允许书写的宽度=（ 父元素的宽度-父元素设置的左右.1的padding）- 这里向内部索要的左右.1rem 的宽度
+      line-height: .62rem
+      text-align: center
+      border-radius: .06rem
+      color: #666
+```
+
 ### 3、列表布局
 ### 4、BetterScroll的使用和字母表布局
 
