@@ -293,11 +293,11 @@ new Vue({
 （1）引用信息将会注册在父组件的 $refs 对象上。如果在普通的 DOM 元素上使用，引用指向的就是 DOM 元素; 如果用在子组件上，引用就指向组件实例；  
 当 v-for 用于元素或组件的时候，引用信息将是包含 DOM 节点或组件实例的数组。  
 （2）关于ref注册时间的重要说明: 因为ref本身是作为渲染结果被创建的，在初始渲染的时候你不能访问它们 - 它们还不存在！$refs 也不是响应式的，因此你不应该试图用它在模板中做数据绑定。  
-（3）ref属性不是一个标准的HTML属性，只是Vue中的一个属性。实际上，它甚至不会是DOM的一部分，所以在浏览器中你查看渲染的HTML，你是看不到有关于ref的任何东西。因为在它前面没有添加:，而且它也不是一个指令。
+（3）ref属性不是一个标准的HTML属性，只是Vue中的一个属性。实际上，它甚至不会是DOM的一部分，所以在浏览器中你查看渲染的HTML，你是看不到有关于ref的任何东西。因为在它前面没有添加:，而且它也不是一个指令。  
 （4）我们也可以通过使用查询选择器来访问DOM元素来实现这样的效果，但是使用ref属性更简洁，而且这也是Vue中的方法。它也将更安全，因为你不会依赖于class和id。因此，几乎不会因为更改了HTML的标签或者CSS样式受到影响。像Vue这样的JavaScript框架的主要目的之一就是让开发人员不必去处理DOM
-（5）用途：减少获取dom节点的消耗。  
+（5）用途：减少获取dom节点的消耗.  
 一般来讲，获取DOM元素，需document.querySelector（".input1"）获取这个dom节点，然后在获取input1的值。但是用ref绑定之后，我们就不需要在获取dom节点了，直接在上面的input上绑定input1，然后$refs里面调用就行。然后在javascript里面这样调用：this.$refs.input1  这样就可以减少获取dom节点的消耗了。  
-- 主要解决问题：通过better-scroll和$refs引用元素节点实现城市列表滚动 [better-scroll](https://github.com/ustbhuangyi/better-scroll/blob/master/README_zh-CN.md)
+- 主要解决问题：通过better-scroll和$refs引用元素节点实现城市列表滚动 [better-scroll](https://github.com/ustbhuangyi/better-scroll/blob/master/README_zh-CN.md)  
 代码片段：  
 > 下面的代码中 better-scroll 是作用在外层 wrapper 容器上的，滚动的部分是 `<div>`元素。这里要注意的是，better-scroll 只处理容器（wrapper）的第一个子元素的滚动，其它的元素都会被忽略。
 ```html
