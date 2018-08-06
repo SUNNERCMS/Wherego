@@ -394,7 +394,12 @@ export default {
 ```
 ### 4、兄弟组件数据传递
 实现效果：（1）点击右侧的字母列表，城市列表页会随之跳转到响应的字母开头的城市。（2）滑动右侧的字母列表时，左侧的城市列表页会随着滚动。   
-实现逻辑：将这个字母值传递给List.vue组件页，将相对应的城市区块显示出来，非父子组件传值可以用bus总线的方式，这里是简单的兄弟之间传值，可以将Alphabet.vue --》 City.vue  --》List.vue  
+实现逻辑：将这个字母值传递给List.vue组件页，将相对应的城市区块显示出来，非父子组件传值可以用bus总线的方式，这里是简单的兄弟之间传值，可以将Alphabet.vue --》 City.vue  --》List.vue    
+三个文件的作用：  
+Alphabet.vue：通过点击或者滑动，传出当前被激活的字母。  
+City.vue：中转站，拿到Alphabet.vue送出的字母，传给List.vue  
+List.vue：负责根据拿到的字母，来实现城市区域的跟新显示
+- 效果一的业务代码：
 >（1）Alphabet.vue单文件组件，给每项遍历出来的字母加上一个点击事件，获取当前点击的字母值,并通过`$emit('change',e.target.innerText)`,向外触发一个change事件，携带的数据时当前字母表的值,第二个参数。  
 主要代码语句：Alphabet.vue文件
 ```html
@@ -453,6 +458,59 @@ export default {
       }
     }
   }
+```
+- 效果二的业务代码：
+实现逻辑：和点击更新城市列表区域的一样，都是根据当前点击或者手指触摸的字母值，来实时改变城市列表页区域。   
+*要解决的问题是：怎么计算出当前手指滑动到的是哪一个字母！！！*
+> 知识点1：‘视（View）’是‘窗口(window)’的一种，像你现在看到的浏览器，整个IE就是窗口，而显示网页的区域就是视口。视口是显示文档的区域，即客户区。
+主要代码片段：Alphabet.vue文件
+```html
+<template>
+  <ul class="list">
+    <li class="item" v-for="item of letters" :key="item" :ref="item"     
+      @click="handleLetterClick"
+      @touchstart="handleTouchStart"    //给每一个字母都帮定四个事件：一个点击事件，一组触摸事件
+      @touchmove="handleTouchMove"
+      @touchend="handleTouchEnd"
+    >{{item}}</li>
+  </ul>
+</template>
+```
+```js
+  data () {
+    return {
+      touchStatus: false    //触摸事件设置的标志位，判断当前字母是否处于触摸装态
+    }
+  },
+  computed: {
+    letters () {
+      const letters = []
+      for (let i in this.cities) {
+        letters.push(i)
+      }
+      return letters // [A,B,C....]        //从传进来的后台城市列表的数据中，将城市字母的值全部提出，放到一个数组中。
+    }
+  },
+  methods: {
+    handleLetterClick (e) { 
+      this.$emit('change', e.target.innerText)   // 点击事件时，向外传送当前点击的文本内容，也即是当前点击的字母值
+    },
+    handleTouchStart () {
+      this.touchStatus = true  
+    },
+    handleTouchMove (e) {
+      if (this.touchStatus) {
+        const startY = this.$refs['A'][0].offsetTop       //是字母A距离城市列表区域上边界的距离
+        const touchY = e.touches[0].clientY - 79      // e.touches[0].clientY是当前手指所点击处距离视口的高度，79px是导航头部的高度（蓝色块）
+        const index = Math.floor((touchY - startY) / 20)  根据高度差和每个字母的高度，可以计算出手指划过了多少个字母。
+        if (index >= 0 && index < this.letters.length) {   
+          this.$emit('change', this.letters[index])   //根据划过字母的数量，来从字母数组中找出当前划过的是哪个字母，然后向外触发。
+        }
+      }
+    },
+    handleTouchEnd () {
+      this.touchStatus = false
+    }
 ```
 
 ## 旅游网站详情介绍页开发  
