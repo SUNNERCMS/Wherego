@@ -392,6 +392,68 @@ export default {
   }
 }
 ```
+### 4、兄弟组件数据传递
+实现效果：（1）点击右侧的字母列表，城市列表页会随之跳转到响应的字母开头的城市。（2）滑动右侧的字母列表时，左侧的城市列表页会随着滚动。   
+实现逻辑：将这个字母值传递给List.vue组件页，将相对应的城市区块显示出来，非父子组件传值可以用bus总线的方式，这里是简单的兄弟之间传值，可以将Alphabet.vue --》 City.vue  --》List.vue  
+>（1）Alphabet.vue单文件组件，给每项遍历出来的字母加上一个点击事件，获取当前点击的字母值,并通过`$emit('change',e.target.innerText)`,向外触发一个change事件，携带的数据时当前字母表的值,第二个参数。  
+主要代码语句：Alphabet.vue文件
+```html
+  <li class="item" v-for="(item,key) of cities" :key="key" @click="handleLetterClick">{{key}}</li>
+```
+```  js
+    methods: {
+    handleLetterClick (e) {
+      this.$emit('change', e.target.innerText)
+    }
+  }
+```
+> （2）在City.vue中的`<city-alphabet :cities="cities" @change="handleLetterChange"></city-alphabet>`进行监听由单页组件向外触发的change事件，若果监听到那么执行handleLetterChange事件，在这个事件中将传进来的letter缓存早data中的letter内，然后通过属性绑定的方式，传递给List.vue组件.   
+主要代码语句：City.vue文件  
+```html
+    <city-list :cities="cities" :hot="hotCities" :letter="letter"></city-list>
+    <city-alphabet :cities="cities" @change="handleLetterChange"></city-alphabet>
+```
+
+```js
+  data () {
+    return {
+      cities: {},
+      hotCities: [],
+      letter: ''
+    }
+
+    handleLetterChange (letter) {
+      this.letter = letter
+    }
+```
+> (3)在List.vue的props中进行接收由City.vue转发过来的letter值，List.vue需要监视letter是否改变，如果改变就使用`this.scroll.scrollToElement(element)`,也即是better-scroll的scrollToElement接口，通过这个接口传入需要显示的区域节点，那么怎么将不同的城市区块加以区分，并传进来呢？`<div class="area" v-for="(item, key) of cities" :key="key" :ref="key">`给每个循环的区块都注册一个dom节点的引用，
+` const element = this.$refs[this.letter][0]`这里的$refs返回的是包含`[A,B,C,D.....]`的城市块数组,刚好在其中查找出点击字母的城市块，传入接口中即可。
+主要代码语句：List.vue文件
+```html
+        <div class="area" v-for="(item, key) of cities" :key="key" :ref="key">   //这里通过ref注册引用，引用是key（A,B,C...）相当于给每个城市                                                                                   块加了一个识别标志
+        <div class="title border-topbottom">{{key}}</div>
+        <div class="item-list" v-for="innerItem of item" :key="innerItem.id">
+          <div class="item border-bottom">{{innerItem.name}}</div>
+        </div>
+      </div>
+```
+```  js
+ props: {
+    cities: Object,
+    hot: Array,
+    letter: String  //接收由City.vue转发过来的letter值
+  },
+  
+  
+  watch: {
+    letter () {
+      if (this.letter) {
+        const element = this.$refs[this.letter][0]   //找到点击字母所标记得城市块
+        this.scroll.scrollToElement(element)
+      }
+    }
+  }
+```
 
 ## 旅游网站详情介绍页开发  
 ## 项目联调测试与发布上线
