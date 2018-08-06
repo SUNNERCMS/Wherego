@@ -579,6 +579,79 @@ List.vue：负责根据拿到的字母，来实现城市区域的跟新显示
     },
 
 ```
+### 5、搜索逻辑的实现
+实现效果：在搜索框中搜索城市的关键字或者拼音时，会将城市列表块区域全部覆盖掉，会出现cities数据中所有的符合项的展示。  
+实现逻辑：根据cities中数据的特点，进行两次循环，获取每个城市的name和spell，然后判断是否在搜索关键字中包含着，若果是那么直接放到一个result的数组中保存起来，最终result中是所有符合项的城市名，赋值给list,使用v-for进行遍历渲染到模板显示。  
+主要代码：
+```html
+    <div class="search-content" ref="search" v-show="keyword">  //根据 v-show="keyword"的有无来决定，搜索结果页是否出现
+      <ul>
+        <li class="search-item border-bottom" v-for="item of list" :key="item.id">
+          {{item.name}}
+        </li>
+        <li class="search-item border-bottom" v-show="hasNoData">  //根据搜索结果决定，是否提示有没有匹配到信息
+          没有找到匹配数据
+        </li>
+      </ul>
+    </div>
+```
+```js
+  data () {
+    return {
+      keyword: '', // 搜索框中的关键词
+      list: [], // 用来存放所有匹配到的结果，所有含有关键词的城市名
+      timer: null
+    }
+  },
+    computed: {
+    hasNoData () {
+      return !this.list.length //  没有找到匹配数据时，根据匹配结果中数量来控制提示信息栏是否出现
+    }
+  },
+
+    watch: {  // 用来监视关键字是否发生改变，如果改变那么就进行匹配，也用到了定时函数节流，当修改搜索关键词时间小于100ms时，前一次的被清除。
+    keyword () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      if (!this.keyword) {
+        this.list = []    //若果关键字不存在，list为空，也即是没有搜索时，不显示内容。
+        return
+      }
+      this.timer = setTimeout(() => {
+        const result = []     // 用于存放从cities中找到的和关键词匹配的项。
+        for (let i in this.cities) {   
+          this.cities[i].forEach((value) => {
+            if (value.spell.indexOf(this.keyword) > -1 || value.name.indexOf(this.keyword) > -1) {
+              result.push(value)
+            }
+          })
+        }
+        this.list = result
+      }, 100)
+    }
+  },
+
+```
+### 遇到的问题及解决办法  
+- 问题1：当符合搜索关键字的城市名特别多时，会占满展示页面，不能滚动了。  
+问题解决：借用better-scroll实现局部滚动。  
+主要代码：
+```html
+<div class="search-content" ref="search" v-show="keyword">   //注意要符合better-scroll的使用规范
+      <ul>
+        <li class="search-item border-bottom" v-for="item of list" :key="item.id">
+          {{item.name}}
+        </li>
+      </ul>
+    </div>
+  </div>
+```
+```js
+  mounted () {
+    this.scroll = new Bscroll(this.$refs.search)  //将要实现滚动的节点内容作为参数传入。
+  }
+```
 
 ## 旅游网站详情介绍页开发  
 ## 项目联调测试与发布上线
