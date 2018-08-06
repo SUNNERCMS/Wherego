@@ -283,7 +283,7 @@ new Vue({
       border-radius: .06rem
       color: #666
 ```
-### 3、列表布局 
+### 3、列表布局、BetterScroll的使用和字母表布局
 实现效果：通过better-scroll和$refs引用元素节点实现城市列表滚动效果，另外要在列表页的最右侧加上字母表索引目录。  
 - 知识点1：用伪元素实现分割线
 主要代码片段：  
@@ -331,7 +331,68 @@ export default {
 }
 </script>
 ```
-### 4、BetterScroll的使用和字母表布局
+### 4、城市列表和字母表的AJAX动态数据渲染
+实现效果：采用ajax异步通信获取数据，结合循环遍历来动态渲染数据。  
+主要代码片段如下：  
+> axios下的ajax使用流程：引入axios,并在节点挂载完整的mounted生命周期时触发数据请求，将拿到的数据用data中的相关项进行缓存，然后通过属性的方式进行父子传值，传给子组件，子组件通过props接收，然后再进行循环遍历取值渲染。
+```js
+import axios from 'axios' //1引入axios
+
+    <city-list :cities="cities" :hot="hotCities"></city-list> //然后通过属性的方式进行父子传值，传给子组件
+    <city-alphabet :cities="cities"></city-alphabet>
+
+  data () {
+    return {       //将拿到的数据用data中的相关项进行缓存
+      cities: {},
+      hotCities: []
+    }
+  },
+  methods: {
+    getCityInfo () {
+      axios.get('/api/city.json')
+        .then(this.handleGetCityInfos)   //axios返回的是promise对象，可以使用then来处理成功回调函数
+    },
+    handleGetCityInfos (res) {
+      console.log(res)
+      res = res.data
+      if (res.ret && res.data) {
+        const data = res.data
+        this.cities = data.cities
+        this.hotCities = data.hotCities
+      }
+    }
+  },
+  mounted () {
+    this.getCityInfo()   //并在节点挂载完整的mounted生命周期时触发数据请求
+  }
+
+```
+> 单页组件进行接收,热门城市和城市列表的数据加载
+```html
+      <div class="area">
+        <div class="title border-topbottom">热门城市</div>
+        <div class="button-list">
+          <div class="button-wrapper" v-for="item of hot" :key="item.id">
+            <div class="button">{{item.name}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="area" v-for="(item, key) of cities" :key="key">
+        <div class="title border-topbottom">{{key}}</div>
+        <div class="item-list" v-for="innerItem of item" :key="innerItem.id">
+          <div class="item border-bottom">{{innerItem.name}}</div>
+        </div>
+
+```
+```js
+export default {
+  props: {
+    cities: Object,
+    hot: Array
+  }
+}
+```
+
 ## 旅游网站详情介绍页开发  
 ## 项目联调测试与发布上线
 
