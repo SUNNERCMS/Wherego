@@ -512,8 +512,73 @@ List.vue：负责根据拿到的字母，来实现城市区域的跟新显示
       this.touchStatus = false
     }
 ```
-- 根据右侧字母列表更新城市列表块的性能优化
+- 根据右侧字母列表更新城市列表块的性能优化  
+代码存在问题：  
+(1)由于给每个字母上面都绑定了触摸事件，在`handleTouchMove (e)`中每划过一个字母时都会重新计算一次字母A的offsetTop值，而这个值实际上只要计算一次就好，是一个基准参考值。那么可以借助钩子函数，来处理这个计算，用哪个钩子函数呢？  
+> 用mounted钩子函数可以吗？不行初始化时，cities为空，而字母列表是从cities中获取的，当用mounted挂载完页面时，还没有从AJAX获取数据，没有字母表的出现，又谈何计算A的offsetTop.
+```js //city.vue
+  data () {
+    return {
+      cities: {},   //初始化时，cities为空，而字母列表是从cities中获取的
+      hotCities: [],
+      letter: ''
+    }
+```
 
+> 用updatad钩子函数，mounted发送axios请求数据之前cities为空，请求数据之后，VUE检测到有数据更新将会重新渲染dom, 之后将cities中的字母表渲染出来，既然这时有了字母列表，就可以计算A的offsetTop
+原来的代码：
+```js
+    handleTouchMove (e) {
+      if (this.touchStatus) {
+        const startY = this.$refs['A'][0].offsetTop  //划过每个字母时都会计算一次
+        const touchY = e.touches[0].clientY - 79
+        const index = Math.floor((touchY - this.startY) / 20)
+        if (index >= 0 && index < this.letters.length) {
+          this.$emit('change', this.letters[index])
+        }
+      }
+    },
+
+```
+优化后的代码：
+```js
+  data () {
+    return {
+      touchStatus: false,
+      startY: 0
+    }
+  },
+  updated () {
+    this.startY = this.$refs['A'][0].offsetTop   
+  },
+```
+(2)每个字母都绑定了触摸事件，当在字母表上进行上下移动时，`handleTouchMove`执行的频率是非常高的，可以通过函数截流限制一下函数执行的频率。  
+> 使用了定时函数setTimeOut,和定时标志位timer：代表是否有定时事件正在执行，设置了一个定时函数的截流，截流时间是16ms,也即是当两个时间的触发间隔小于16ms时，前一个不会发生，否则只要触发就会发生，可以在人眼察别不出来变化延时的情况下适当限制下一些函数的执行次数。
+```js
+  data () {
+    return {
+      touchStatus: false,
+      startY: 0,
+      timer: null  //timer标志
+    }
+  },
+
+    handleTouchMove (e) {
+      if (this.touchStatus) {
+        if (this.timer) {              // 设置了一个定时函数的截流，截流时间是16ms,也即是当两个时间的触发间隔小于16ms时，前一个不会发生
+          clearTimeout(this.timer)
+        }
+        this.timer = setTimeout(() => {
+          const touchY = e.touches[0].clientY - 79
+          const index = Math.floor((touchY - this.startY) / 20)
+          if (index >= 0 && index < this.letters.length) {
+            this.$emit('change', this.letters[index])
+          }
+        }, 16)
+      }
+    },
+
+```
 
 ## 旅游网站详情介绍页开发  
 ## 项目联调测试与发布上线
