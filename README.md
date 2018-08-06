@@ -652,7 +652,47 @@ List.vue：负责根据拿到的字母，来实现城市区域的跟新显示
     this.scroll = new Bscroll(this.$refs.search)  //将要实现滚动的节点内容作为参数传入。
   }
 ```
+### 5、通过[Vuex](https://vuex.vuejs.org/zh/)实现单文件组件的数据共享
+实现效果：点击城市列表页中城市，或者是搜索框搜到的城市，首页右上角的城市名都能随着改变，并且点击后自动跳转到首页。  
+实现逻辑：使用vuex(一个专为 Vue.js 应用程序开发的状态管理模式)将两个单文件组件相通的数据进行共享管理，另外使用[编程式导航](https://router.vuejs.org/zh/guide/essentials/navigation.html)来进行点击更改后完成首页的自动跳转。
+> vuex的使用原理：在state中存放共享数据-->通过组件调用dispatch方法来调用action函数中的方法 -->再有action函数中的方法使用commit方法，调用mutation函数来改变数据 -->数据改变那么组件里面的数据随着改变。  
+主要代码段：store/index.js文件
+```js  
+import Vue from 'vue'
+import Vuex from 'vuex'
 
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+  state: {
+    city: '武汉'   //是共享数据
+  },
+  actions: {     
+    changeCity (ctx, city) {  //接收由点击`handleCityClick`事件传送来的参数，第一个参数是执行上下文
+      ctx.commit('citychange', city)  //在调用mutation中的citychange函数，将要改变的城市名进一步传送
+    }
+  },
+  mutations: {
+    citychange (state, city) {  
+      state.city = city  //最终转啦一圈，用新数据改变共享数据
+    }
+  }
+})
+```
+> 以List.vue为例进行分析，search.vue页类似,给每个城市列表的城市名都绑定了一个`handleCityClick`事件,并将当前的城市名传入
+```html
+        <div class="item-list" v-for="innerItem of item" :key="innerItem.id" @click="handleCityClick(innerItem.name)">
+          <div class="item border-bottom">{{innerItem.name}}</div>
+        </div>
+```
+```js
+  methods: {
+    handleCityClick (city) {   //该函数利用vuex中的diapatch方法，将数据送到了action中changeCity的方法中
+      this.$store.dispatch('changeCity', city)
+      this.$router.push('/')  //编程式导航，跳转到首页
+    }
+  },
+```
 ## 旅游网站详情介绍页开发  
 ## 项目联调测试与发布上线
 
