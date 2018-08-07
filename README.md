@@ -795,8 +795,8 @@ JavaScript 的函数只能返回一个值，如果需要返回多个值，只能
 ## 旅游网站详情介绍页开发  
 ### 1、动态路由和banner布局
 实现效果：当点击热销推荐中的栏目时，会根据路由的路径跳转到详情页，这里设置的是动态路由加了item.id在里面，可以根据不同的条目来显示不同的详情页内容。  
-- 知识点1：`<router-link>`的tag属性,有时候想要 <router-link> 渲染成某种标签，例如 <li>。 于是我们使用 tag prop 类指定何种标签，同样它还是会监听点击，触发导航。
-  
+- 知识点1：`<router-link>`的tag属性,有时候想要 <router-link> 渲染成某种标签，例如 <li>。于是我们使用 tag prop 类指定何种标签，同样它还是会监听点击，触发导航。  
+主要代码片段：
 ```html
 Recommend.vue文件
       <ul>
@@ -810,16 +810,26 @@ Recommend.vue文件
       </router-link>
     </ul>
 ```
-
-
-
-
-
-
-
-
-
+```js
+  router中的index.js文件
+      {
+      path: '/detail/:id', //动态匹配路由
+      name: 'Detail',
+      component: Detail
+    },
+```
+- 知识点二：线性渐变和透明度  
+  linear-gradient() 函数用于创建一个线性渐变的 "图像"；语法：linear-gradient(direction, color-stop1, color-stop2, ...);  
+  direction	用角度值指定渐变的方向（或角度）透明度：0.0 （完全透明）到 1.0（完全不透明）。
+  ```html
+   .banner-info
+      background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8))
+  ```
+  
 ### 2、公用图片画廊的拆分
+  
+  
+  
 ### 3、Header渐隐渐显效果的实现
 ### 4、对全局事件的解绑
 ### 5、使用递归组件实现详情页列表
