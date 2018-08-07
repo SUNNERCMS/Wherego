@@ -88,6 +88,15 @@ style样式部分
       color: $darkTextColor
       ellipsis()   //引用位置
 ````
+- 问题3：当城市选择名过长时，会撑破右侧的容器  
+问题分析： 右侧的宽度设置死了为width: 1.24rem
+问题解决：采用最小宽度进行设置。
+````css
+  .header-right
+      min-width: 1.04rem
+      padding: 0 .1rem
+      float: right
+````  
 ### 4.热销推荐组件开发  
 实现效果：分栏展示，每栏左侧是介绍图片，右侧是介绍信息以及查看详情的点击按钮。  
 知识点：  
@@ -652,7 +661,108 @@ List.vue：负责根据拿到的字母，来实现城市区域的跟新显示
     this.scroll = new Bscroll(this.$refs.search)  //将要实现滚动的节点内容作为参数传入。
   }
 ```
+### 5、通过[Vuex](https://vuex.vuejs.org/zh/)实现单文件组件间数据共享
+实现效果：点击城市列表页中城市，或者是搜索框搜到的城市，首页右上角的城市名都能随着改变，并且点击后自动跳转到首页。  
+实现逻辑：使用vuex(一个专为 Vue.js 应用程序开发的状态管理模式)将两个单文件组件相通的数据进行共享管理，另外使用[编程式导航](https://router.vuejs.org/zh/guide/essentials/navigation.html)来进行点击更改后完成首页的自动跳转。
+> vuex的使用原理：在state中存放共享数据-->通过组件调用dispatch方法来调用action函数中的方法 -->再有action函数中的方法使用commit方法，调用mutation函数来改变数据 -->数据改变那么组件里面的数据随着改变。  
+主要代码段：store/index.js文件
+```js  
+import Vue from 'vue'
+import Vuex from 'vuex'
 
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+  state: {
+    city: '武汉'   //是共享数据
+  },
+  actions: {     
+    changeCity (ctx, city) {  //接收由点击`handleCityClick`事件传送来的参数，第一个参数是执行上下文
+      ctx.commit('citychange', city)  //在调用mutation中的citychange函数，将要改变的城市名进一步传送
+    }
+  },
+  mutations: {
+    citychange (state, city) {  
+      state.city = city  //最终转啦一圈，用新数据改变共享数据
+    }
+  }
+})
+```
+> 以List.vue为例进行分析，search.vue页类似,给每个城市列表的城市名都绑定了一个`handleCityClick`事件,并将当前的城市名传入
+```html
+        <div class="item-list" v-for="innerItem of item" :key="innerItem.id" @click="handleCityClick(innerItem.name)">
+          <div class="item border-bottom">{{innerItem.name}}</div>
+        </div>
+```
+```js
+  methods: {
+    handleCityClick (city) {   //该函数利用vuex中的diapatch方法，将数据送到了action中changeCity的方法中
+      this.$store.dispatch('changeCity', city)
+      this.$router.push('/')  //编程式导航，跳转到首页
+    }
+  },
+```
+### 遇到的问题及解决办法  
+- 问题1：当更改完首页中的城市名字后，再次刷新又会回到默认值，没有缓存机制;另外随着store文件中index.js代码越来越多，可以拆分多个子文件，通过export导出和import导入。
+问题解决：使用HTML中的localstorage来完成本地存储。  
+主要代码：
+> 当一些用户关闭了本地存储功能或者开启了隐身模式，使用localstorage会直接使浏览器抛出异常，导致代码无法运行，最好和try---catch组合使用
+```html
+
+```
+```js
+let defaultCity = '武汉'
+try {
+  if (localStorage.city) {
+    defaultCity = localStorage.city
+  }
+} catch (e) {}
+
+export default new Vuex.Store({
+  state: {
+    city: defaultCity
+  },
+  actions: {
+    changeCity (ctx, city) {
+      ctx.commit('citychange', city)
+    }
+  },
+  mutations: {
+    citychange (state, city) {
+      state.city = city
+      try {
+        localStorage.city = city
+      } catch (e) {}
+    }
+  }
+})
+```
+- 代码优化部分：  
+> 使用了vuex状态管理模式来管理共享的数据，之后将其实例化导出，在根文件main.js中引入，并注入到了根组件中，那么在其他组件实例中都可以直接调用访问，不过调用访问要用`{{this.$store.state.city}}`代码比较长，若多处使用更不方便，使用了vuex的mapState辅助函数，在组件中创建计算属性来返回vuex store中的状态，然后直接调用。
+```html
+     <div class="button">{{this.$Store.state.city}}</div>  ---->   <div class="button">{{this.currentCity}}</div>
+```
+```js
+import { mapState } from 'vuex'
+  computed: {
+    ...mapState({
+      currentCity: 'city'
+    })
+  },
+```
+- 知识点1：  
+(1)mapState 函数返回的是一个对象。我们如何将它与局部计算属性混合使用呢？通常，我们需要使用一个工具函数将多个对象合并为一个，以使我们可以将最终对象传给 computed 属性。但是自从有了对象展开运算符，我们可以极大地简化写法：
+```js
+computed: {
+  localComputed () { /* ... */ },
+  // 使用对象展开运算符将此对象混入到外部对象中
+  ...mapState({
+    // ...
+  })
+}
+```
+(2)扩展运算符应用在 函数的返回值  
+JavaScript 的函数只能返回一个值，如果需要返回多个值，只能返回数组或对象。扩展运算符提供了解决这个问题的一种变通方法。
 ## 旅游网站详情介绍页开发  
 ## 项目联调测试与发布上线
 
