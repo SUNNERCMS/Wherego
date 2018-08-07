@@ -28,11 +28,9 @@ export default{
   computed: {
     ...mapState(['city'])
   },
-  mounted () {
-    this.getHomeInfo()
-  },
   data () {
     return {
+      lastCity: '',
       swiperList: [],
       iconList: [],
       recommendList: [],
@@ -53,6 +51,16 @@ export default{
         this.recommendList = data.recommendList
         this.weekendList = data.weekendList
       }
+    }
+  },
+  mounted () {
+    this.lastCity = this.city // 将修改后的数据进行保存
+    this.getHomeInfo()
+  },
+  activated () {
+    if (this.lastCity !== this.city) { //当这次的城市名和上次不同时，要重新加载对应数据
+      this.lastCity = this.city //当这次的城市名和上次不同时，将原来的覆盖，用于后面在比较
+      this.getHomeInfo() //重新发送ajax请求
     }
   }
 }
