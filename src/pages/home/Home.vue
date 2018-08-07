@@ -58,9 +58,9 @@ export default{
     this.getHomeInfo()
   },
   activated () {
-    if (this.lastCity !== this.city) { //当这次的城市名和上次不同时，要重新加载对应数据
-      this.lastCity = this.city //当这次的城市名和上次不同时，将原来的覆盖，用于后面在比较
-      this.getHomeInfo() //重新发送ajax请求
+    if (this.lastCity !== this.city) { // 当这次的城市名和上次不同时，要重新加载对应数据
+      this.lastCity = this.city // 当这次的城市名和上次不同时，将原来的覆盖，用于后面在比较
+      this.getHomeInfo() // 重新发送ajax请求
     }
   }
 }
