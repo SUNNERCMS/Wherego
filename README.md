@@ -794,6 +794,30 @@ JavaScript 的函数只能返回一个值，如果需要返回多个值，只能
 ```
 ## 旅游网站详情介绍页开发  
 ### 1、动态路由和banner布局
+实现效果：当点击热销推荐中的栏目时，会根据路由的路径跳转到详情页，这里设置的是动态路由加了item.id在里面，可以根据不同的条目来显示不同的详情页内容。  
+- 知识点1：`<router-link>`的tag属性,有时候想要 <router-link> 渲染成某种标签，例如 <li>。 于是我们使用 tag prop 类指定何种标签，同样它还是会监听点击，触发导航。
+  
+```html
+Recommend.vue文件
+      <ul>
+      <router-link tag="li" class="item border-bottom" v-for="item of list" :key="item.id" :to="'/detail/' + item.id">  //动态绑定路由
+        <img class="item-img" :src="item.imgUrl" />  //图片部分
+        <div class="item-info">   //文本信息部分
+          <p class="item-title">{{item.title}}</p>
+          <p class="item-desc">{{item.desc}}</p>
+          <button class="item-button">查看详情</button>
+        </div>
+      </router-link>
+    </ul>
+```
+
+
+
+
+
+
+
+
 
 ### 2、公用图片画廊的拆分
 ### 3、Header渐隐渐显效果的实现
