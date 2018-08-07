@@ -5,7 +5,7 @@
     </div>
     <div class="search-content" ref="search" v-show="keyword">
       <ul>
-        <li class="search-item border-bottom" v-for="item of list" :key="item.id">
+        <li class="search-item border-bottom" v-for="item of list" :key="item.id" @click="handleCityClick(item.name)">
           {{item.name}}
         </li>
         <li class="search-item border-bottom" v-show="hasNoData">
@@ -25,14 +25,20 @@ export default {
   },
   data () {
     return {
-      keyword: '',
-      list: [],
+      keyword: '', // 搜索框中的关键词
+      list: [], // 用来存放所有匹配到的结果，所有含有关键词的城市名
       timer: null
+    }
+  },
+  methods: {
+    handleCityClick (city) { // handleCityClick函数将点击获得的城市，使用VUEX来改变共享数据
+      this.$store.dispatch('changeCity', city)
+      this.$router.push('/')
     }
   },
   computed: {
     hasNoData () {
-      return !this.list.length
+      return !this.list.length //  没有找到匹配数据时，根据匹配结果中数量来控制提示信息栏是否出现
     }
   },
   watch: {
@@ -45,7 +51,7 @@ export default {
         return
       }
       this.timer = setTimeout(() => {
-        const result = []
+        const result = [] // 用于存放从cities中找到的和关键词匹配的项。
         for (let i in this.cities) {
           this.cities[i].forEach((value) => {
             if (value.spell.indexOf(this.keyword) > -1 || value.name.indexOf(this.keyword) > -1) {
