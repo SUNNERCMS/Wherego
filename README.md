@@ -737,7 +737,7 @@ export default new Vuex.Store({
   }
 })
 ```
--代码优化部分：  
+- 代码优化部分：  
 > 使用了vuex状态管理模式来管理共享的数据，之后将其实例化导出，在根文件main.js中引入，并注入到了根组件中，那么在其他组件实例中都可以直接调用访问，不过调用访问要用`{{this.$store.state.city}}`代码比较长，若多处使用更不方便，使用了vuex的mapState辅助函数，在组件中创建计算属性来返回vuex store中的状态，然后直接调用。
 ```html
      <div class="button">{{this.$Store.state.city}}</div>  ---->   <div class="button">{{this.currentCity}}</div>
