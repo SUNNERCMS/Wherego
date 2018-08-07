@@ -39,8 +39,8 @@ export default {
   activated () { // keep-alive带来的钩子函数，只要一被展示，这个函数就会执行。
     window.addEventListener('scroll', this.handleScroll)
   },
-  deactivated () {
-    window.removeEventListener('scroll', this.handleScroll)
+  deactivated () { // 由于是全局对象下监听scroll事件，那么在其他页面滚动时仍会触发
+    window.removeEventListener('scroll', this.handleScroll) // 这里便是当页面消失或者离开该页面时触发的函数，解绑
   }
 }
 </script>
