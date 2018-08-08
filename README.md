@@ -970,6 +970,62 @@ export default {
 </script>
 ```
 ### 6、动态获取详情页数据
+### 遇到的问题及解决办法  
+- 问题1：当点击热销推荐中的故宫时，通过axios发送请求来获取详情页的数据，点击不同的景点时获取不同的数据，那是怎么区别的呢？关键点在于每个景点的id值不同，根据这个可以各自的数据。那么现在问题是什么呢？点击不同的景点，请求中的id值始终为第一次的id值如：`http://localhost:8080/#/detail/0001` 这里的id参数会变，但是控制栏中Network中的XHR显示的发送的请求参数不变。  
+问题分析：这里的问题和`home.vue`中的类似，那里是当点击城市列表的城市时，要在首页显示不同的信息，然而由于所有的路由都用了keep-alive进行了缓存，所以点击不同的城市也只是会显示第一次加载数据后的缓存信息。这里的问题也是如此：由于Detail页面通过keep-alive做了缓存，所以mounted中的ajax请求就只执行一次。   
+之前的解决方法如下：  
+> home.vue文件，使用了keep-alive的生命周期钩子函数：activited() 再次请求，覆盖缓存，让首页可以根据城市名是否改变来决定是否重发ajax请求。
+```js
+  activated () {
+    if (this.lastCity !== this.city) { // 当这次的城市名和上次不同时，要重新加载对应数据
+      this.lastCity = this.city // 当这次的城市名和上次不同时，将原来的覆盖，用于后面在比较
+      this.getHomeInfo() // 重新发送ajax请求
+    }
+  }
+```
+这里的解决方法如下：    
+> 在根组件中的keep-alive中设置不缓存的单文件组件，也即是每一次进入该页面时都会触发mounted钩子函数，发送ajax请求获取相对应的数据。
+```html
+<template>
+  <div id="app">
+    <keep-alive exclude="Detail">
+      <router-view/>
+    </keep-alive>
+  </div>
+</template>
+```
+- 问题2：多个页面之间的拖动存在关联，拖动首页点击热门推荐的最后一个选项，跳转到详情页时，界面也存在拖动。   
+解决方法：在router路由管理器中设置每次切换路由后，新页面的[滚动行为](https://router.vuejs.org/zh/guide/advanced/scroll-behavior.html#异步滚动)。
+```js
+export default new Router({
+  routes: [
+    {
+      path: '/home',
+      name: 'Home',
+      component: Home
+    },
+    {
+      path: '/city',
+      name: 'City',
+      component: City
+    },
+    {
+      path: '/detail/:id',
+      name: 'Detail',
+      component: Detail
+    },
+    // 重定向
+    {
+      path: '/',
+      redirect: '/home'
+    }
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    return { x: 0, y: 0 }
+  }
+})
+
+```
 ### 7、在项目中加入基本动画
 ## 项目联调测试与发布上线
 
