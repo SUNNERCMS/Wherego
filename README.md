@@ -795,7 +795,7 @@ JavaScript 的函数只能返回一个值，如果需要返回多个值，只能
 ## 旅游网站详情介绍页开发  
 ### 1、动态路由和banner布局
 实现效果：当点击热销推荐中的栏目时，会根据路由的路径跳转到详情页，这里设置的是动态路由加了item.id在里面，可以根据不同的条目来显示不同的详情页内容。  
-- 知识点1：`<router-link>`的tag属性,有时候想要 <router-link> 渲染成某种标签，例如 <li>。于是我们使用 tag prop 类指定何种标签，同样它还是会监听点击，触发导航。  
+- 知识点1：`<router-link>`的tag属性,有时候想要 <router-link> 渲染成某种标签，例如`<li>`,于是我们使用 tag prop 类指定何种标签，同样它还是会监听点击，触发导航。  
 主要代码片段：
 ```html
 Recommend.vue文件
@@ -825,13 +825,98 @@ Recommend.vue文件
    .banner-info
       background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8))
   ```
+ ### 2、公用图片画廊拆分成公共组件
+  实现效果：点击banner会出现公共画廊，该画廊具有轮播特效，并且具有“1/33” 这样的分页显示，当点击画廊上下的非图片区域时，会关闭画廊。考虑到可能以后也要用到这个画廊效果，所以将其拿出来进行组件化。  
+  拆分实现逻辑：创建路径-> src/common/gallary/Gallay.vue ,然后在Banner.vue中导入,在模板中使用，通过一个v-show的标志位来控制banner和gallary谁显示谁隐藏。  
+主要代码片段:Banner.vue文件
+ ```html 
+  <common-gallary :imgs="imgs" v-show="showGallary" @close="handleGallaryClose"></common-gallary>   监听Gallary.vue向外触发的关闭事件
+ ```
+  ````js
+  import CommonGallary from 'common/gallary/Gallary'
   
-### 2、公用图片画廊的拆分
-  
-  
-  
-### 3、Header渐隐渐显效果的实现
-### 4、对全局事件的解绑
+    components: {
+    CommonGallary
+  }
+  ````
+### 遇到的问题及解决办法  
+- 问题1：当给`<common-gallary>`组件添加了v-show="showGallary"进行隐藏或显示时，画廊的左右滑动达不到预期的效果了  
+问题解决：只进行了隐藏和显示操作，使得画廊的swiper不能正常工作，可以尝试在改变操作后进行初始化刷新，这个时候要找到给swiper插件进行初始化和刷新的配置方法  
+> [observer](https://3.swiper.com.cn/api/Observer/2015/0308/218.html)：启动动态检查器(OB/观众/观看者)，当改变swiper的样式（例如隐藏/显示）或者修改swiper的子元素时，自动初始化swiper   
+ [observeParents](https://3.swiper.com.cn/api/Observer/2015/0308/219.html):将observe应用于Swiper的父元素。当Swiper的父元素变化时，例如window.resize，Swiper更新。  
+[分页类型的设置paginationType](https://3.swiper.com.cn/api/pagination/2016/0126/299.html) 
+```html
+<template>
+  <div class="container" @click="handleGallaryClick">
+    <div class="wrapper">
+      <swiper :options="swiperOptions">
+        <swiper-slide v-for="(item, index) in imgs" :key="index">
+          <img class="gallary-img" :src="item" />
+        </swiper-slide>
+        <div class="swiper-pagination" slot="pagination"></div>
+      </swiper>
+    </div>
+  </div>
+</template>
+```
+```js
+  data () {
+    return {
+      swiperOptions: {
+        pagination: '.swiper-pagination',
+        paginationType: 'fraction',  //设置分页的类型
+        observeParents: true,
+        observer: true
+      }
+    }
+  },
+```
+### 3、Header渐隐渐显效果的实现和对全局事件的解绑
+实现效果：在banner的头部有一个景点详情的介绍框，左边有一个后退的按钮，当向下滚动时，如果滚动距离大于60px时，那么后退按钮会消失，介绍框会一点一点出现。  
+实现逻辑：根据scrollTop的值来计算opacity值的变化，来做渐隐渐现的效果。   
+主要代码片段:  
+```html
+    <div class="header-fixed" v-show="!showAbs" :style="opacityStyle">   给介绍框绑定了动态的样式
+      <router-link to="/">
+        <div class="iconfont header-fixed-back">&#xe624;</div>
+      </router-link>
+      景点详情
+    </div>
+```
+```js
+<script>
+export default {
+  name: 'DetailHeader',
+  data () {
+    return {
+      showAbs: true,
+      opacityStyle: {  //动态的样式数据
+        opacity: 0
+      }
+    }
+  },
+  methods: {
+    handleScroll () {                                  // 滚动超过规定区域呈现渐隐渐现的效果
+      const top = document.documentElement.scrollTop // 获取该元素垂直滚动的像素数
+      if (top > 60) {
+        let opacity = top / 140              // 结果是小数形式，当top超过140，opacity就超过1了
+        opacity = opacity > 1 ? 1 : opacity // 对opacity的最大值做了限定
+        this.opacityStyle = { opacity }    // 将计算出来的opacity的值进行更新动态显示
+        this.showAbs = false              // 当向下滚动超过60px时，header-fixed块才显示出来
+      } else {
+        this.showAbs = true              // top的值小于60px，圆显示，块隐藏
+      }
+    }
+  },
+  activated () {                                                // keep-alive带来的钩子函数，只要一被展示，这个函数就会执行。
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  deactivated () {                                            // 由于是全局对象下监听scroll事件，那么在其他页面滚动时仍会触发
+    window.removeEventListener('scroll', this.handleScroll) // 这里便是当页面消失或者离开该页面时触发的函数，对全局事件的解绑
+  }
+}
+</script>
+```
 ### 5、使用递归组件实现详情页列表
 ### 6、动态获取详情页数据
 ### 7、在项目中加入基本动画
