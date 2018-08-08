@@ -917,7 +917,58 @@ export default {
 }
 </script>
 ```
-### 5、使用递归组件实现详情页列表
+### 5、使用递归组件实现详情页多级列表
+- 我所理解的递归组件的思想：   
+适用环境:当数据一层一层往里嵌套时，并且可以看做最小单元块的复用情况下，找到最小单元块的表达形式和表达关系即可使用递归。   
+主要代码片段：  
+> 递归使用的数据格式:可以看做title->children的形式往里进行嵌套
+```js
+ return {
+      list: [{
+        title: '成人票',
+        children: [{
+          title: '成人三馆联票',
+          children: [{
+            title: '成人三馆联票 - 某一连锁店销售'
+          }]
+        }, {
+          title: '成人五馆联票'
+        }]
+      }, {
+        title: '学生票'
+      }, {
+        title: '儿童票'
+      }, {
+        title: '特惠票'
+      }]
+    }
+```
+> 递归的实现逻辑，这里相当于一层一层的扒皮区骨，进行渲染，直至对象的最里面
+```html
+<template>
+  <div>
+    <div class="item" v-for="(item, index) of list" :key="index">  这里第一次使用时是取得是成人票，学生票这个一级对象，
+      <div class="item-title border-bottom">
+        <span class="item-title-icon"></span>
+        {{item.title}}
+      </div>
+      <div v-if="item.children" class="item-chilren">  这里判断一级对象中是否有含有children的对象
+        <detail-list :list="item.children"></detail-list>  如果有将其看做一个整体数据在使用这个单文件组件进行遍历
+      </div>
+    </div>
+  </div>
+</template>
+```
+```js
+<script>
+export default {
+  name: 'DetailList',
+  props: {
+    list: Array
+  }
+}
+</script>
+```
 ### 6、动态获取详情页数据
 ### 7、在项目中加入基本动画
 ## 项目联调测试与发布上线
