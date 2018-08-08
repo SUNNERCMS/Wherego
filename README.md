@@ -1027,6 +1027,45 @@ export default new Router({
 
 ```
 ### 7、在项目中加入基本动画
-## 项目联调测试与发布上线
-
-
+实现效果：给gallary画廊组件在使用时加入了fade-in和fade-out的效果。  
+实现逻辑：利用`<transition>`为单文件组件添加过渡效果，并将外部组件通过`<slot>`插入进来，表示给该组件添加过渡效果。 也可以理解为这里创建了一个过渡组件，在其他组件导入这个组件之后，想让谁有过渡效果就把谁放到这个组件中。
+> 主要代码片段：FadeAnimation.vue文件   
+```html
+<template>
+  <transition>
+    <slot></slot>  //接收外部组件或节点
+  </transition>
+</template>
+```
+```js
+<script>
+export default {
+  name: 'FadeAnimation'
+}
+</script>
+```
+```css
+<style lang="stylus" scoped>
+  .v-enter, .v-leave-to           代表进入过渡轴之前和离开过渡轴之后
+    opacity: 0
+  .v-enter-active, .v-leave-active  进入过渡轴后和离开过渡轴前
+    transition: opacity .5s
+</style>
+```
+> 主要代码片段：使用这个过渡组件的Banner.vue文件
+```html
+    <fade-animation>   用这个过渡组件包含想要添加过渡效果的组件
+      <common-gallary :imgs="bannerImgs" v-show="showGallary" @close="handleGallaryClose">  这里的内容会被放到过渡组件模板中的插槽中
+      </common-gallary>
+    </fade-animation>
+```
+```js
+<script>
+import CommonGallary from 'common/gallary/Gallary'  //将过渡组件导入
+ components: {
+    CommonGallary,
+    FadeAnimation
+  }
+}
+</script>
+```
