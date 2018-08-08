@@ -32,7 +32,7 @@ export default {
         this.opacityStyle = { opacity } // 将计算出来的opacity的值进行更新动态显示
         this.showAbs = false // 当向下滚动超过60px时，header-fixed块才显示出来
       } else {
-        this.showAbs = true // top的值小于60px，圆显示，块隐藏
+        this.showAbs = true // top的值小于60px，圆显示，块隐藏.
       }
     }
   },
