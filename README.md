@@ -825,10 +825,10 @@ Recommend.vue文件
    .banner-info
       background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8))
   ```
-### 2、公用图片画廊拆分成公共组件
+ ### 2、公用图片画廊拆分成公共组件
   实现效果：点击banner会出现公共画廊，该画廊具有轮播特效，并且具有“1/33” 这样的分页显示，当点击画廊上下的非图片区域时，会关闭画廊。考虑到可能以后也要用到这个画廊效果，所以将其拿出来进行组件化。  
-  拆分实现逻辑：创建路径-> src/common/gallary/Gallay.vue ,然后在Banner.vue中导入,在模板中使用，通过一个v-show的标志位来控制banner和gallary谁显示谁隐藏。
-  主要代码片段:Banner.vue文件
+  拆分实现逻辑：创建路径-> src/common/gallary/Gallay.vue ,然后在Banner.vue中导入,在模板中使用，通过一个v-show的标志位来控制banner和gallary谁显示谁隐藏。  
+主要代码片段:Banner.vue文件
  ```html 
   <common-gallary :imgs="imgs" v-show="showGallary" @close="handleGallaryClose"></common-gallary>   监听Gallary.vue向外触发的关闭事件
  ```
