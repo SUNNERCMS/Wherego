@@ -872,6 +872,54 @@ Recommend.vue文件
   },
 ```
 ### 3、Header渐隐渐显效果的实现
+实现效果：在banner的头部有一个景点详情的介绍框，左边有一个后退的按钮，当向下滚动时，如果滚动距离大于60px时，那么后退按钮会消失，介绍框会一点一点出现。  
+实现逻辑：根据scrollTop的值来计算opacity值的变化，来做渐隐渐现的效果。   
+主要代码片段:  
+```html
+    <div class="header-fixed" v-show="!showAbs" :style="opacityStyle">   给介绍框绑定了动态的样式
+      <router-link to="/">
+        <div class="iconfont header-fixed-back">&#xe624;</div>
+      </router-link>
+      景点详情
+    </div>
+```
+```js
+<script>
+export default {
+  name: 'DetailHeader',
+  data () {
+    return {
+      showAbs: true,
+      opacityStyle: {  //动态的样式数据
+        opacity: 0
+      }
+    }
+  },
+  methods: {
+    handleScroll () {                                  // 滚动超过规定区域呈现渐隐渐现的效果
+      const top = document.documentElement.scrollTop // 获取该元素垂直滚动的像素数
+      if (top > 60) {
+        let opacity = top / 140              // 结果是小数形式，当top超过140，opacity就超过1了
+        opacity = opacity > 1 ? 1 : opacity // 对opacity的最大值做了限定
+        this.opacityStyle = { opacity }    // 将计算出来的opacity的值进行更新动态显示
+        this.showAbs = false              // 当向下滚动超过60px时，header-fixed块才显示出来
+      } else {
+        this.showAbs = true              // top的值小于60px，圆显示，块隐藏
+      }
+    }
+  },
+  activated () {                                                // keep-alive带来的钩子函数，只要一被展示，这个函数就会执行。
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  deactivated () {                                            // 由于是全局对象下监听scroll事件，那么在其他页面滚动时仍会触发
+    window.removeEventListener('scroll', this.handleScroll) // 这里便是当页面消失或者离开该页面时触发的函数，解绑
+  }
+}
+</script>
+```
+
+
+
 
 ### 4、对全局事件的解绑
 ### 5、使用递归组件实现详情页列表
