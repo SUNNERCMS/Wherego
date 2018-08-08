@@ -871,7 +871,7 @@ Recommend.vue文件
     }
   },
 ```
-### 3、Header渐隐渐显效果的实现
+### 3、Header渐隐渐显效果的实现和对全局事件的解绑
 实现效果：在banner的头部有一个景点详情的介绍框，左边有一个后退的按钮，当向下滚动时，如果滚动距离大于60px时，那么后退按钮会消失，介绍框会一点一点出现。  
 实现逻辑：根据scrollTop的值来计算opacity值的变化，来做渐隐渐现的效果。   
 主要代码片段:  
@@ -912,16 +912,11 @@ export default {
     window.addEventListener('scroll', this.handleScroll)
   },
   deactivated () {                                            // 由于是全局对象下监听scroll事件，那么在其他页面滚动时仍会触发
-    window.removeEventListener('scroll', this.handleScroll) // 这里便是当页面消失或者离开该页面时触发的函数，解绑
+    window.removeEventListener('scroll', this.handleScroll) // 这里便是当页面消失或者离开该页面时触发的函数，对全局事件的解绑
   }
 }
 </script>
 ```
-
-
-
-
-### 4、对全局事件的解绑
 ### 5、使用递归组件实现详情页列表
 ### 6、动态获取详情页数据
 ### 7、在项目中加入基本动画
