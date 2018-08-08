@@ -828,6 +828,49 @@ Recommend.vue文件
 ### 2、公用图片画廊拆分成公共组件
   实现效果：点击banner会出现公共画廊，该画廊具有轮播特效，并且具有“1/33” 这样的分页显示，当点击画廊上下的非图片区域时，会关闭画廊。考虑到可能以后也要用到这个画廊效果，所以将其拿出来进行组件化。  
   拆分实现逻辑：创建路径-> src/common/gallary/Gallay.vue ,然后在Banner.vue中导入,在模板中使用，通过一个v-show的标志位来控制banner和gallary谁显示谁隐藏。
+  主要代码片段:Banner.vue文件
+ ```html 
+  <common-gallary :imgs="imgs" v-show="showGallary" @close="handleGallaryClose"></common-gallary>   监听Gallary.vue向外触发的关闭事件
+ ```
+  ````js
+  import CommonGallary from 'common/gallary/Gallary'
+  
+    components: {
+    CommonGallary
+  }
+  ````
+### 遇到的问题及解决办法  
+- 问题1：当给`<common-gallary>`组件添加了v-show="showGallary"进行隐藏或显示时，画廊的左右滑动达不到预期的效果了  
+问题解决：只进行了隐藏和显示操作，使得画廊的swiper不能正常工作，可以尝试在改变操作后进行初始化刷新，这个时候要找到给swiper插件进行初始化和刷新的配置方法  
+> [observer](https://3.swiper.com.cn/api/Observer/2015/0308/218.html)：启动动态检查器(OB/观众/观看者)，当改变swiper的样式（例如隐藏/显示）或者修改swiper的子元素时，自动初始化swiper   
+ [observeParents](https://3.swiper.com.cn/api/Observer/2015/0308/219.html):将observe应用于Swiper的父元素。当Swiper的父元素变化时，例如window.resize，Swiper更新。  
+[分页类型的设置paginationType](https://3.swiper.com.cn/api/pagination/2016/0126/299.html) 
+```html
+<template>
+  <div class="container" @click="handleGallaryClick">
+    <div class="wrapper">
+      <swiper :options="swiperOptions">
+        <swiper-slide v-for="(item, index) in imgs" :key="index">
+          <img class="gallary-img" :src="item" />
+        </swiper-slide>
+        <div class="swiper-pagination" slot="pagination"></div>
+      </swiper>
+    </div>
+  </div>
+</template>
+```
+```js
+  data () {
+    return {
+      swiperOptions: {
+        pagination: '.swiper-pagination',
+        paginationType: 'fraction',  //设置分页的类型
+        observeParents: true,
+        observer: true
+      }
+    }
+  },
+```
   
   
   
