@@ -1073,4 +1073,3 @@ import CommonGallary from 'common/gallary/Gallary'  //将过渡组件导入
 }
 </script>
 ```
-去
