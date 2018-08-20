@@ -2,6 +2,7 @@
 导航目录：  
 现阶段完成效果展示如下(其余模块和功能展示陆续上传......)   
 ![](https://github.com/SUNNERCMS/Wherego/blob/master/src/sucai/xiaoguo.gif)   
+![](https://github.com/SUNNERCMS/Wherego/blob/master/src/sucai/GIF.gif)    
 ## 旅游网站首页开发 
 ### 1.header区域  
 ### 问题及解决部分
