@@ -20,7 +20,7 @@
 `width: 100%
 padding-bottom: 31.25%`   
 （2）scoped：表示当前的样式仅仅对HomeSwiper这个单页组件有效，而轮播图里面的分页，
-  确实在swipe这样的一个子组件中，即便在style中设置了样式也不奏效，只有进行样式的穿透。  
+  却是在swipe这样的一个子组件中，即便在style中设置了样式也不奏效，只有进行样式的穿透。  
   样式穿透：
 `  .wrapper >>> .swiper-pagination-bullet-active
     background: #fff`  
