@@ -32,6 +32,16 @@
     </swiper>
   </div>
 </template>
+  ```   
+  ```js
+    data () {
+    return {
+      swiperOption: {
+        pagination: '.swiper-pagination', //轮播组件的各种显示均需由swiper组件控制，这里将小圆点也交给它管理
+        loop: true
+      }
+    }
+  },
   ```
 （1）图片的宽高为640px,200px,宽高比例是31.25%
   是为了进行宽高比例自适应
