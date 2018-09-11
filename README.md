@@ -15,6 +15,9 @@
 解决：1.在当前项目的目录下，通过gitbash安装了fastclick第三方的依赖库，操作指令为 npm install fastclick --save  
 2.再入口文件中引入 `import fastClick from 'fastclick'`应用在文档体中：`fastClick.attach(document.body)`
 ### 2.首页轮播图  
+  轮播功能实现：使用了`vue-awesome-swiper`插件，在main.js里面进行导入和声明使用  
+  `import VueAwesomeSwiper from 'vue-awesome-swiper' `
+  `Vue.use(VueAwesomeSwiper) `
 （1）图片的宽高为640px,200px,宽高比例是31.25%
   是为了进行宽高比例自适应
 `width: 100%
@@ -26,8 +29,8 @@ padding-bottom: 31.25%`
 `  .wrapper >>> .swiper-pagination-bullet-active
     background: #fff`  
 ### 3.图标区域  
-  实现效果：在图标区显示8个导引小图标，超过8个时增加第二页可以进行分页轮播查看。  
-  逻辑实现：借助`swiper`来完成轮播动画，不过要通过`computed`计算属性来完成分页的计算，运用了一维数组转化为二维数组的方法，`pages[0]`中最多是8个图标,多余的放到`pages[1]`中，在`swiper-slide`中就是展示的下一页内容。
+  - 实现效果：在图标区显示8个导引小图标，超过8个时增加第二页可以进行分页轮播查看。  
+  - 逻辑实现：借助`swiper`来完成轮播动画，不过要通过`computed`计算属性来完成分页的计算，运用了一维数组转化为二维数组的方法，`pages[0]`中最多是8个图标,多余的放到`pages[1]`中，在`swiper-slide`中就是展示的下一页内容。
   主要代码段：   
   template部分：
 ````js
