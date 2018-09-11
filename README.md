@@ -15,9 +15,24 @@
 解决：1.在当前项目的目录下，通过gitbash安装了fastclick第三方的依赖库，操作指令为 npm install fastclick --save  
 2.再入口文件中引入 `import fastClick from 'fastclick'`应用在文档体中：`fastClick.attach(document.body)`
 ### 2.首页轮播图  
-  轮播功能实现：使用了`vue-awesome-swiper`插件，在main.js里面进行导入和声明使用  
+  - 轮播功能实现：使用了`vue-awesome-swiper`插件，在main.js里面进行导入和声明使用
   `import VueAwesomeSwiper from 'vue-awesome-swiper' `
-  `Vue.use(VueAwesomeSwiper) `
+  `Vue.use(VueAwesomeSwiper) `  
+  - 实现代码如下：  
+  ```html
+ <template>
+  <!-- 这个DIV标签是为了给图片一个区域，避免页面抖动 -->
+  <div class="wrapper">
+    <swiper :options="swiperOption" v-if="showSwiper">
+      <swiper-slide v-for="item of list" :key="item.id">
+        <img class="swiper-img" :src="item.imgUrl" />
+      </swiper-slide>
+      <!-- 选项控制项，这里仅仅使用了分页(在项目中实际展示的效果就是分页导航小圆点)，还有左右箭头，滚动条的选项没使用 -->
+      <div class="swiper-pagination"  slot="pagination"></div>
+    </swiper>
+  </div>
+</template>
+  ```
 （1）图片的宽高为640px,200px,宽高比例是31.25%
   是为了进行宽高比例自适应
 `width: 100%
