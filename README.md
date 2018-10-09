@@ -9,7 +9,8 @@
 ### 问题及解决部分
 - 问题一：  
 移动端1像素边框的解决方案  
-解决：采用了border.css,在项目中的路径./src/assets/styles/border.css
+本项目解决方法：采用了border.css,在项目中的路径./src/assets/styles/border.css  
+常见的解决方法： [7种方法解决移动端Retina屏幕1px边框问题](https://www.jianshu.com/p/7e63f5a32636) 
 
 - 问题二：  
 300ms点击延时的问题：在一些移动终端中，click点击事件会有300ms的点击延时  
