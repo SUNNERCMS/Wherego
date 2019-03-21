@@ -1106,6 +1106,9 @@ import CommonGallary from 'common/gallary/Gallary'  //将过渡组件导入
 </script>
 ```
 未完待续。。。  
+预添加功能：  
+
 本人CSDN博客：https://blog.csdn.net/qq_39207948  
 欢迎关注微信公众号：web前端碎片
 QQ:309355484 欢迎交流
+
