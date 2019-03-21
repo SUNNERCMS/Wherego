@@ -1107,7 +1107,8 @@ import CommonGallary from 'common/gallary/Gallary'  //将过渡组件导入
 ```
 未完待续。。。  
 预添加功能：  
-1.注册登录+滑动验证
+1.注册登录+滑动验证  
+2.鼠标选中动画  
 本人CSDN博客：https://blog.csdn.net/qq_39207948  
 欢迎关注微信公众号：web前端碎片
 QQ:309355484 欢迎交流
