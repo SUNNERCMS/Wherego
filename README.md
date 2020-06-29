@@ -216,7 +216,6 @@ static/mock
       swiperList: []
     }
   },
-  
   getHomeInfoSucc (res) {
     res = res.data
     if (res.ret && res.data) {
